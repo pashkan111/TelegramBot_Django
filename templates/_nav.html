@@ -1,0 +1,12 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-secondary fixed-top mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">Главная</a>
+        <ul class="navbar-nav ml-auto">
+          {% if request.user.is_authenticated %}
+                <div class="nav-link text-light">Здравствуйте, <a href="" style="text-decoration: none; color: ivory;">{{request.user.username}}</a></div>
+              </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
