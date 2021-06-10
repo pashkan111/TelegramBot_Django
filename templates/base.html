@@ -8,7 +8,16 @@
 </head>
 <body style="background-color: beige;">
     <div class="container">
-        {% block content %}{% endblock %}   
+        <div class="row mt-5">
+            <div class="col-md-12 row justify-content-md-center mt-5">
+                <div class="col-md-7">
+                    {% block content %}{% endblock %}
+                </div>
+                <div class="col-md-3">
+                    {% block filter %} {% endblock %}
+                </div>
+            </div>
+        </div>     
     </div>
 </body>
 </html>

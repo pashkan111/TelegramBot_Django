@@ -1,10 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row mt-5">
-    <div class="col-md-12 row justify-content-md-center mt-5">
+
     {% for i in adv %}
-    <div class="col-md-7 mb-4">
+    <div class="mb-4">
       {% if i.sales_price %}
         <div class="card text-center" style='border: double; color: brown;'>
           <div class="card-header" style="background-color: rgb(144, 202, 236);">
@@ -30,8 +29,13 @@
         </div>
       </div>
       {% endfor %}
-    </div>
-  </div>
 
 
+{% endblock %}
+
+{% block filter %}
+<div class="list-group"> 
+  <a href="{% url 'filter' id='price' %}" class="list-group-item" >По горячей цене</a>
+  <a href="{% url 'filter' id='all' %}" class="list-group-item" >Все</a>
+</div>
 {% endblock %}

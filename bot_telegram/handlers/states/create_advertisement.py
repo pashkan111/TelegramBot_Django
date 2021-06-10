@@ -4,9 +4,9 @@ from asgiref.sync import sync_to_async
 from loader import dp
 from .states import AdvertisementState
 from aiogram.dispatcher.filters import Command
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, user
 from keyboards.choise_buttons import choice, link_to_mainpage
-from mainapp.models import Advertisement
+from mainapp.models import Advertisement, User
 import time
 
 
@@ -17,6 +17,13 @@ def assign_sales_price(sales_price):
     if adv:
         adv.sales_price = sales_price
         adv.save()
+
+
+@sync_to_async
+def get_user(username):
+    user=User.objects.get_or_create(username=username)
+    return user[0]
+
 
 @dp.message_handler(Command('create'), state=None)
 async def create_advertisement(message: types.Message):
@@ -29,7 +36,6 @@ async def create_advertisement(message: types.Message):
 @dp.message_handler(state=AdvertisementState.name)
 async def save_name(message: types.Message, state: FSMContext):
     name = message.text
-    id = message.from_user.username
     await state.update_data(name=name)
     await AdvertisementState.next()
     await message.answer('Введите описание объявления')
@@ -54,7 +60,7 @@ async def save_price(message: types.Message, state: FSMContext):
     await state.update_data(price=price)
     data = await state.get_data()
     await state.finish()
-    adv = Advertisement(**data, id=round(time.time()))
+    adv = Advertisement(**data, id=round(time.time()), user = await get_user(message.from_user.username))
     id_of_adv.append(adv.id)
     await sync_to_async(adv.save)()
     await message.answer(text="Есть ли горячая цена на товар?", reply_markup=choice)
