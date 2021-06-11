@@ -2,7 +2,6 @@ from django.shortcuts import redirect, render
 from .models import Advertisement, User
 import datetime
 from django.utils.timezone import utc
-from django.http import JsonResponse
 from django.db.models.functions import Lower
 
 
@@ -29,19 +28,6 @@ def home(request):
     except:
         ValueError('Список объявлений пуст')
     return render(request, 'home.html', {'adv': adv_list})
-
-
-
-def filter1():
-    adv_list=Advertisement.objects.order_by('-created')
-    return adv_list
-
-def filter2():
-    adv_list=Advertisement.objects.order_by('-sales_price', '-created')
-    return adv_list
-
-
-
 
 
 def filter(request, id):
