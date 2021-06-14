@@ -3,5 +3,5 @@ from .views import home, filter
 
 urlpatterns = [
     path('home/', home, name='home'),
-    path('filter/<str:id>', filter, name='filter'),
+    path('filter/<str:condition>', filter, name='filter'),
 ]

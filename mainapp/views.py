@@ -1,38 +1,27 @@
 from django.shortcuts import redirect, render
 from .models import Advertisement, User
-import datetime
-from django.utils.timezone import utc
 from django.db.models.functions import Lower
+from .utils import sort_adv_list, check_time_5min, check_time_60min
 
-
-now = datetime.datetime.utcnow().replace(tzinfo=utc)
 
 def home(request):
-    adv_list = Advertisement.objects.order_by('sales_price', '-created')
-    try:
-        last_adv = adv_list.first()
-        created = last_adv.created
-        delta = now - created
-        if delta.total_seconds() > 3600:
-            Advertisement.objects.all().delete()
-        else:
-            list_of_sales_price_adv = adv_list.filter(sales_price__gt=0).order_by('created')
-            if list_of_sales_price_adv:
-                last_element = list_of_sales_price_adv.last()
-                created_last_element = last_element.created
-                delta_last_element = now - created_last_element
-                if delta_last_element.total_seconds() > 300:
-                    adv_list=adv_list
-                else:
-                    adv_list=Advertisement.objects.order_by('sales_price','-created')
-    except:
-        ValueError('Список объявлений пуст')
+    adv_list = sort_adv_list()
+    first_created_element = adv_list.last()
+    if check_time_60min(first_created_element) == False:
+        sort_adv_list().delete()
+    else:
+        last_sales_price_element = adv_list.filter(sales_price__gt=0).first()
+        if last_sales_price_element:
+            if check_time_5min(last_sales_price_element) == False:
+               adv_list = sort_adv_list()
+            else:
+                adv_list = Advertisement.objects.raw('(SELECT * FROM mainapp_advertisement WHERE sales_price>0 ORDER BY id DESC) UNION ALL (SELECT * FROM mainapp_advertisement WHERE sales_price is null ORDER BY id DESC)')
     return render(request, 'home.html', {'adv': adv_list})
 
 
-def filter(request, id):
-    if id:
-        if id == 'price':
+def filter(request, condition):
+    if condition:
+        if condition == 'price':
             adv = Advertisement.objects.filter(sales_price__gt=0)
             return render(request, 'home.html', {'adv': adv})
     return home(request)

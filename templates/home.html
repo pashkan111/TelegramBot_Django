@@ -35,7 +35,7 @@
 
 {% block filter %}
 <div class="list-group"> 
-  <a href="{% url 'filter' id='price' %}" class="list-group-item" >По горячей цене</a>
-  <a href="{% url 'filter' id='all' %}" class="list-group-item" >Все</a>
+  <a href="{% url 'filter' condition='price' %}" class="list-group-item" >По горячей цене</a>
+  <a href="{% url 'filter' condition='all' %}" class="list-group-item" >Все</a>
 </div>
 {% endblock %}
